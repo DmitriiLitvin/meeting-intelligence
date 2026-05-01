@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Добавить встречу — Meeting Intelligence</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Georgia', serif; background: #0f0f0f; color: #e8e4dc; min-height: 100vh; }
+
+  .header { padding: 2rem 2.5rem 1.25rem; border-bottom: 0.5px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; color: #888; }
+  .logo span { color: #c9b89a; }
+  .back-link { font-size: 12px; color: #555; text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; }
+  .back-link:hover { color: #c9b89a; }
+
+  .main { padding: 2rem 2.5rem; max-width: 720px; }
+  .section-title { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #555; margin-bottom: 2rem; }
+
+  .api-section { background: #161616; border: 0.5px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 1.1rem 1.25rem; margin-bottom: 2rem; }
+  .api-section label { display: block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #555; margin-bottom: 8px; }
+  .api-row { display: flex; gap: 8px; }
+  .api-row input { flex: 1; background: #0f0f0f; border: 0.5px solid rgba(255,255,255,0.08); border-radius: 4px; padding: 8px 12px; color: #888; font-size: 13px; font-family: monospace; }
+  .api-row input:focus { outline: none; border-color: rgba(201,184,154,0.3); }
+  .btn-sm { padding: 8px 16px; font-size: 12px; background: rgba(201,184,154,0.08); border: 0.5px solid rgba(201,184,154,0.25); color: #c9b89a; border-radius: 4px; cursor: pointer; transition: all 0.2s; white-space: nowrap; font-family: inherit; }
+  .btn-sm:hover { background: rgba(201,184,154,0.18); }
+  .key-status { font-size: 11px; margin-top: 6px; color: #444; }
+  .key-status.ok { color: #7ab88a; }
+
+  .form-group { margin-bottom: 1.25rem; }
+  .form-group label { display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #666; margin-bottom: 8px; }
+  .form-group label .hint { color: #3a3a3a; font-size: 10px; letter-spacing: 0; text-transform: none; font-style: italic; }
+  .form-group input, .form-group textarea { width: 100%; background: #161616; border: 0.5px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 10px 14px; color: #ddd; font-size: 14px; font-family: inherit; resize: vertical; transition: border-color 0.2s; }
+  .form-group input:focus, .form-group textarea:focus { outline: none; border-color: rgba(201,184,154,0.35); }
+  .form-group textarea { min-height: 150px; line-height: 1.6; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .btn-primary { padding: 12px 30px; background: #c9b89a; color: #0f0f0f; border: none; border-radius: 6px; font-size: 13px; font-family: inherit; cursor: pointer; font-weight: 700; letter-spacing: 0.04em; transition: all 0.2s; }
+  .btn-primary:hover { background: #d4c4aa; }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .status-bar { display: none; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 6px; margin-top: 1rem; font-size: 13px; }
+  .status-bar.processing { display: flex; background: rgba(201,184,154,0.05); border: 0.5px solid rgba(201,184,154,0.15); color: #c9b89a; }
+  .status-bar.success { display: flex; background: rgba(100,180,120,0.06); border: 0.5px solid rgba(100,180,120,0.2); color: #7ab88a; }
+  .status-bar.error { display: flex; background: rgba(200,80,80,0.06); border: 0.5px solid rgba(200,80,80,0.2); color: #c88; }
+
+  .spinner { width: 14px; height: 14px; border: 1.5px solid rgba(201,184,154,0.2); border-top-color: #c9b89a; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .result-preview { margin-top: 2rem; display: none; }
+  .result-preview.show { display: block; }
+  .result-title { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #555; margin-bottom: 1rem; }
+  .json-block { background: #161616; border: 0.5px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 1rem; font-family: monospace; font-size: 12px; color: #888; line-height: 1.6; white-space: pre-wrap; word-break: break-all; max-height: 320px; overflow-y: auto; }
+
+  .instructions { background: #161616; border: 0.5px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 1.25rem; margin-top: 2.5rem; }
+  .instructions h4 { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #555; margin-bottom: 1rem; }
+  .instructions ol { padding-left: 1.2rem; }
+  .instructions li { font-size: 13px; color: #666; line-height: 1.8; }
+  .instructions code { background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 3px; font-family: monospace; font-size: 12px; color: #c9b89a; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Meeting <span>Intelligence</span> — Admin</div>
+  <a href="index.html" class="back-link">← Дашборд</a>
+</div>
+
+<div class="main">
+  <div class="section-title">Добавить новую встречу</div>
+
+  <div class="api-section">
+    <label>Claude API Key</label>
+    <div class="api-row">
+      <input type="password" id="api-key" placeholder="sk-ant-..." />
+      <button class="btn-sm" id="save-key-btn">Сохранить</button>
+    </div>
+    <div class="key-status" id="key-status">Ключ не сохранён</div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Название встречи <span class="hint">— Claude заполнит из Summary</span></label>
+      <input type="text" id="title" placeholder="Необязательно" />
+    </div>
+    <div class="form-group">
+      <label>Дата <span class="hint">— из заголовка Summary</span></label>
+      <input type="date" id="date" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Участники <span class="hint">— Claude определит из транскрипта</span></label>
+    <input type="text" id="participants" placeholder="Необязательно" />
+  </div>
+
+  <div class="form-group">
+    <label>Summary из Fathom</label>
+    <textarea id="fathom-summary" placeholder="Вставь сюда Summary из Fathom..."></textarea>
+  </div>
+
+  <div class="form-group">
+    <label>Транскрипт из Fathom</label>
+    <textarea id="fathom-transcript" style="min-height:220px" placeholder="Вставь сюда транскрипт из Fathom..."></textarea>
+  </div>
+
+  <button class="btn-primary" id="process-btn">Обработать через Claude →</button>
+
+  <div class="status-bar" id="status-bar">
+    <div class="spinner" id="spinner" style="display:none"></div>
+    <span id="status-text"></span>
+  </div>
+
+  <div class="result-preview" id="result-preview">
+    <div class="result-title">Результат — скопируй JSON в файл meetings/ДАТА.json</div>
+    <div class="json-block" id="json-output"></div>
+    <br>
+    <button class="btn-sm" id="copy-btn">Скопировать JSON</button>
+  </div>
+
+  <div class="instructions">
+    <h4>Как добавить митинг в дашборд</h4>
+    <ol>
+      <li>Заполни форму выше и нажми "Обработать"</li>
+      <li>Скопируй полученный JSON</li>
+      <li>Создай файл <code>meetings/YYYY-MM-DD.json</code> в репозитории</li>
+      <li>Запусти <code>python3 update_index.py</code> — обновит index.json</li>
+      <li>Запушь в GitHub — дашборд обновится автоматически</li>
+    </ol>
+  </div>
+</div>
+
+<script>
+(function() {
+  var apiKey = localStorage.getItem('mi_api_key') || '';
+  var resultJSON = null;
+
+  // ---- Init ----
+  document.getElementById('date').value = new Date().toISOString().split('T')[0];
+  if (apiKey) {
+    document.getElementById('api-key').value = apiKey;
+    setKeyStatus(true);
+  }
+
+  // ---- Bind buttons ----
+  document.getElementById('save-key-btn').addEventListener('click', saveKey);
+  document.getElementById('process-btn').addEventListener('click', processMeeting);
+  document.getElementById('copy-btn').addEventListener('click', copyJSON);
+
+  // ---- Functions ----
+  function setKeyStatus(saved) {
+    var el = document.getElementById('key-status');
+    el.textContent = saved ? 'Ключ сохранён ✓' : 'Ключ не введён';
+    el.className = saved ? 'key-status ok' : 'key-status';
+  }
+
+  function saveKey() {
+    var v = document.getElementById('api-key').value.trim();
+    if (!v) { setKeyStatus(false); return; }
+    apiKey = v;
+    localStorage.setItem('mi_api_key', v);
+    setKeyStatus(true);
+  }
+
+  function setStatus(type, msg) {
+    var bar = document.getElementById('status-bar');
+    var spinner = document.getElementById('spinner');
+    var text = document.getElementById('status-text');
+    bar.className = 'status-bar ' + type;
+    spinner.style.display = (type === 'processing') ? 'block' : 'none';
+    text.textContent = msg;
+  }
+
+  function buildPrompt(summary, transcript) {
+    var lines = [
+      'Ты анализируешь рабочую встречу. Данные из Fathom — транскрипт и/или summary. Язык может быть русский, английский или смешанный.',
+      '',
+      'НОРМАЛИЗАЦИЯ ИМЁН:',
+      '- "O R" или "OR" в транскрипте — это Misha (руководитель)',
+      '- "Дмитрий Литвин", "dima.lit99@gmail.com", "Дмитрий" — это Dima',
+      '- Все остальные имена (Linda, Masha, Maria и т.д.) — оставляй как есть',
+      '',
+      'НАЗВАНИЕ И ДАТА:',
+      '- Из заголовка Fathom (формат "Название - Month DD") сгенерируй название встречи на русском, 3-6 слов, суть темы',
+      '- Из того же заголовка извлеки дату в формате YYYY-MM-DD. Год 2025 если не указан явно',
+      '- Если заголовка нет — используй Meeting Purpose для названия',
+      ''
+    ];
+
+    if (summary) {
+      lines.push('=== SUMMARY ===');
+      lines.push(summary);
+      lines.push('');
+    }
+    if (transcript) {
+      lines.push('=== TRANSCRIPT ===');
+      lines.push(transcript);
+      lines.push('');
+    }
+
+    lines = lines.concat([
+      'Верни ТОЛЬКО валидный JSON без markdown, строго в этом формате:',
+      '{',
+      '  "title": "Планировка комнат и ценовая стратегия",',
+      '  "date": "2025-04-29",',
+      '  "participants": "Misha, Dima, Linda, Masha",',
+      '  "summary": "Краткое резюме на русском, 3-5 предложений.",',
+      '  "tasks": [',
+      '    { "text": "Описание задачи", "owner": "Имя или null", "deadline": "Срок или null", "fathom_link": "https://... или null" }',
+      '  ],',
+      '  "resolved": ["Решение 1", "Решение 2"],',
+      '  "open_questions": ["Открытый вопрос 1"]',
+      '}',
+      '',
+      'Правила:',
+      '- tasks: включай ВСЕ ACTION ITEM из Fathom. Ссылки WATCH — добавляй в fathom_link',
+      '- resolved: принятые решения и договорённости',
+      '- open_questions: вопросы без ответа, отложенные темы',
+      '- Все тексты кроме имён, дат и ссылок — на русском языке',
+      '- JSON должен быть валидным, без trailing commas'
+    ]);
+
+    return lines.join('\n');
+  }
+
+  async function processMeeting() {
+    var summary = document.getElementById('fathom-summary').value.trim();
+    var transcript = document.getElementById('fathom-transcript').value.trim();
+    var titleInput = document.getElementById('title').value.trim();
+    var dateInput = document.getElementById('date').value;
+    var participantsInput = document.getElementById('participants').value.trim();
+
+    document.getElementById('result-preview').classList.remove('show');
+
+    if (!apiKey) {
+      setStatus('error', 'Сначала введи и сохрани API ключ');
+      return;
+    }
+    if (!summary && !transcript) {
+      setStatus('error', 'Вставь хотя бы Summary или Транскрипт из Fathom');
+      return;
+    }
+
+    document.getElementById('process-btn').disabled = true;
+    setStatus('processing', 'Claude анализирует встречу...');
+
+    try {
+      var resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-5',
+          max_tokens: 2000,
+          messages: [{ role: 'user', content: buildPrompt(summary, transcript) }]
+        })
+      });
+
+      if (!resp.ok) {
+        var errData = await resp.json();
+        throw new Error(errData.error ? errData.error.message : 'HTTP ' + resp.status);
+      }
+
+      var data = await resp.json();
+      var rawText = data.content[0].text.trim().replace(/```json/g, '').replace(/```/g, '').trim();
+      var analysis = JSON.parse(rawText);
+
+      var finalTitle = analysis.title || titleInput || 'Встреча';
+      var finalDate = analysis.date || dateInput || new Date().toISOString().split('T')[0];
+      var finalParticipants = analysis.participants || participantsInput || '';
+
+      document.getElementById('title').value = finalTitle;
+      document.getElementById('date').value = finalDate;
+      document.getElementById('participants').value = finalParticipants;
+
+      delete analysis.title;
+      delete analysis.date;
+      delete analysis.participants;
+
+      var fileId = finalDate + '-' + finalTitle.toLowerCase()
+        .replace(/[^a-zа-яё0-9\s]/gi, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .slice(0, 40);
+
+      resultJSON = {
+        id: fileId,
+        title: finalTitle,
+        date: finalDate,
+        participants: finalParticipants,
+        analysis: analysis,
+        created_at: new Date().toISOString()
+      };
+
+      var indexEntry = {
+        file: fileId + '.json',
+        title: finalTitle,
+        date: finalDate,
+        participants: finalParticipants,
+        summary_preview: analysis.summary ? analysis.summary.slice(0, 120) + '...' : '',
+        tasks_count: analysis.tasks ? analysis.tasks.length : 0,
+        resolved_count: analysis.resolved ? analysis.resolved.length : 0,
+        open_count: analysis.open_questions ? analysis.open_questions.length : 0
+      };
+
+      document.getElementById('json-output').textContent =
+        '// 1) Сохрани как: meetings/' + fileId + '.json\n' +
+        JSON.stringify(resultJSON, null, 2) +
+        '\n\n// 2) Добавь в meetings/index.json:\n' +
+        JSON.stringify(indexEntry, null, 2);
+
+      document.getElementById('result-preview').classList.add('show');
+      setStatus('success', 'Готово! Скопируй JSON ниже и добавь в репозиторий.');
+
+    } catch (e) {
+      setStatus('error', 'Ошибка: ' + e.message);
+    } finally {
+      document.getElementById('process-btn').disabled = false;
+    }
+  }
+
+  function copyJSON() {
+    var text = document.getElementById('json-output').textContent;
+    navigator.clipboard.writeText(text).then(function() {
+      alert('Скопировано!');
+    }).catch(function() {
+      alert('Не удалось — выдели текст вручную');
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
