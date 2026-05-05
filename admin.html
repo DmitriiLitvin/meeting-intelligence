@@ -90,6 +90,15 @@
   </div>
 
   <div class="form-group">
+    <label>Проект</label>
+    <select id="project" style="width:100%;background:#161616;border:0.5px solid rgba(255,255,255,0.08);border-radius:6px;padding:10px 14px;color:#ddd;font-size:14px;font-family:inherit;appearance:none;cursor:pointer;">
+      <option value="iq-nurseries">🏫 IQ Nurseries</option>
+      <option value="la-truffole">🍟 La Truffole</option>
+      <option value="other">📁 Другое</option>
+    </select>
+  </div>
+
+  <div class="form-group">
     <label>Участники <span class="hint">— Claude определит из транскрипта</span></label>
     <input type="text" id="participants" placeholder="Необязательно" />
   </div>
@@ -295,6 +304,8 @@
       delete analysis.date;
       delete analysis.participants;
 
+      var project = document.getElementById('project').value;
+
       var fileId = finalDate + '-' + finalTitle.toLowerCase()
         .replace(/[^a-zа-яё0-9\s]/gi, '')
         .replace(/\s+/g, '-')
@@ -306,6 +317,7 @@
         title: finalTitle,
         date: finalDate,
         participants: finalParticipants,
+        project: project,
         analysis: analysis,
         created_at: new Date().toISOString()
       };
@@ -315,7 +327,8 @@
         title: finalTitle,
         date: finalDate,
         participants: finalParticipants,
-        summary_preview: analysis.summary ? analysis.summary.slice(0, 120) + '...' : '',
+        project: project,
+        summary_preview: analysis.purpose ? analysis.purpose.slice(0, 120) + '...' : (analysis.summary ? analysis.summary.slice(0, 120) + '...' : ''),
         tasks_count: analysis.tasks ? analysis.tasks.length : 0,
         resolved_count: analysis.resolved ? analysis.resolved.length : 0,
         open_count: analysis.open_questions ? analysis.open_questions.length : 0

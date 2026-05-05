@@ -25,236 +25,135 @@
     --red-dim: rgba(200,100,100,0.1);
     --red: #c47a7a;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.6; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 15px;
-    line-height: 1.6;
-  }
-
-  /* ---- HEADER ---- */
-  .header {
-    padding: 1.75rem 3rem;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    background: rgba(12,12,14,0.92);
-    backdrop-filter: blur(12px);
-    z-index: 100;
-  }
-  .logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    color: var(--text);
-  }
+  .header { padding: 1.75rem 3rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: rgba(12,12,14,0.92); backdrop-filter: blur(12px); z-index: 100; }
+  .logo { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; letter-spacing: 0.05em; color: var(--text); }
   .logo em { color: var(--gold); font-style: normal; }
   .header-right { font-size: 13px; color: var(--text-dim); letter-spacing: 0.05em; }
 
-  /* ---- PAGES ---- */
   .page { display: none; }
   .page.active { display: block; }
 
   /* ---- LIST PAGE ---- */
-  .list-page { padding: 3rem; max-width: 1200px; margin: 0 auto; }
+  .list-page { padding: 3rem; max-width: 1100px; margin: 0 auto; }
+  .page-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 2.5rem; }
 
-  .page-label {
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 2.5rem;
+  /* PROJECT SECTION */
+  .project-section { margin-bottom: 3rem; }
+  .project-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 1.25rem; cursor: pointer; user-select: none;
   }
+  .project-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .project-name { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: var(--text); }
+  .project-count { font-size: 12px; color: var(--text-dim); margin-left: 4px; }
+  .project-toggle { margin-left: auto; font-size: 12px; color: var(--text-dim); transition: transform 0.2s; }
+  .project-toggle.collapsed { transform: rotate(-90deg); }
+  .project-divider { flex: 1; height: 1px; background: var(--border); }
 
-  .meetings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 1.25rem;
-  }
+  .project-meetings { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+  .project-meetings.collapsed { display: none; }
 
-  .meeting-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    cursor: pointer;
-    transition: all 0.25s;
-    position: relative;
-    overflow: hidden;
-  }
-  .meeting-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--gold), transparent);
-    opacity: 0;
-    transition: opacity 0.25s;
-  }
-  .meeting-card:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  /* MEETING CARD */
+  .meeting-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+  .meeting-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; opacity: 0; transition: opacity 0.2s; }
+  .meeting-card:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
   .meeting-card:hover::before { opacity: 1; }
 
-  .card-date { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
-  .card-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.25; }
-  .card-participants { font-size: 12px; color: var(--text-mid); margin-bottom: 14px; }
-  .card-purpose { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-  .card-stats { display: flex; gap: 10px; flex-wrap: wrap; }
-  .stat { font-size: 11px; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.03em; }
+  .card-date { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+  .card-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.25; }
+  .card-participants { font-size: 12px; color: var(--text-mid); margin-bottom: 12px; }
+  .card-purpose { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+  .stat { font-size: 11px; padding: 3px 9px; border-radius: 20px; }
   .stat-tasks { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
   .stat-resolved { background: var(--green-dim); color: var(--green); border: 1px solid rgba(109,184,138,0.2); }
   .stat-open { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(122,156,196,0.2); }
 
+  .empty-project { font-size: 13px; color: var(--text-dim); padding: 1rem 0; }
   .empty-state { text-align: center; padding: 6rem 2rem; color: var(--text-dim); }
-  .empty-state p { font-size: 15px; }
 
   /* ---- DETAIL PAGE ---- */
-  .detail-page { max-width: 900px; margin: 0 auto; padding: 2.5rem 3rem 5rem; }
-
-  .back-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--text-dim); cursor: pointer; margin-bottom: 2.5rem;
-    background: none; border: none; transition: color 0.2s;
-  }
+  .detail-page { max-width: 860px; margin: 0 auto; padding: 2.5rem 3rem 5rem; }
+  .back-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); cursor: pointer; margin-bottom: 2.5rem; background: none; border: none; transition: color 0.2s; }
   .back-btn:hover { color: var(--gold); }
 
-  .detail-meta { margin-bottom: 0.5rem; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); }
-  .detail-title { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 600; line-height: 1.15; color: var(--text); margin-bottom: 0.75rem; }
-  .detail-participants { font-size: 13px; color: var(--text-mid); margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .detail-project-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-bottom: 1rem; }
+  .detail-meta { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.5rem; }
+  .detail-title { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 600; line-height: 1.15; color: var(--text); margin-bottom: 0.75rem; }
+  .detail-participants { font-size: 13px; color: var(--text-mid); margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
 
-  /* PURPOSE BLOCK */
-  .purpose-block {
-    background: linear-gradient(135deg, rgba(201,169,110,0.08), rgba(201,169,110,0.03));
-    border: 1px solid var(--gold-border);
-    border-radius: 10px;
-    padding: 1.5rem 1.75rem;
-    margin-bottom: 2rem;
-  }
+  .purpose-block { background: linear-gradient(135deg, rgba(201,169,110,0.08), rgba(201,169,110,0.03)); border: 1px solid var(--gold-border); border-radius: 10px; padding: 1.5rem 1.75rem; margin-bottom: 2rem; }
   .purpose-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; opacity: 0.8; }
   .purpose-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; color: var(--text); line-height: 1.5; }
 
-  /* SECTION HEADER */
-  .section-header {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 1.25rem; margin-top: 2.5rem;
-  }
-  .section-header h2 {
-    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--text-dim); font-weight: 500;
-  }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; margin-top: 2.5rem; }
+  .section-header h2 { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); font-weight: 500; white-space: nowrap; }
   .section-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .count-pill { font-size: 11px; background: var(--surface2); color: var(--text-dim); padding: 2px 8px; border-radius: 10px; font-family: monospace; letter-spacing: 0; text-transform: none; }
 
-  /* KEY TAKEAWAYS */
-  .takeaways-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.5rem; }
+  .takeaways-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   @media (max-width: 640px) { .takeaways-grid { grid-template-columns: 1fr; } }
-  .takeaway-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem 1.25rem;
-    font-size: 14px;
-    color: var(--text-mid);
-    line-height: 1.6;
-    position: relative;
-    padding-left: 1.5rem;
-  }
-  .takeaway-item::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: var(--gold);
-    border-radius: 3px 0 0 3px;
-    opacity: 0.5;
-  }
+  .takeaway-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem 1rem 1.5rem; font-size: 14px; color: var(--text-mid); line-height: 1.6; position: relative; }
+  .takeaway-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--gold); border-radius: 3px 0 0 3px; opacity: 0.5; }
 
-  /* TOPICS */
-  .topic-block {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1rem;
-  }
+  .topic-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
   .topic-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
   .topic-point { font-size: 14px; color: var(--text-mid); line-height: 1.6; padding: 4px 0 4px 1rem; position: relative; }
   .topic-point::before { content: '—'; position: absolute; left: 0; color: var(--text-dim); }
 
-  /* NEXT STEPS */
-  .next-step-item {
-    display: flex; gap: 14px; align-items: flex-start;
-    padding: 12px 0; border-bottom: 1px solid var(--border);
-  }
+  .next-step-item { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
   .next-step-item:last-child { border-bottom: none; }
-  .step-num {
-    width: 24px; height: 24px; border-radius: 50%;
-    background: var(--gold-dim); border: 1px solid var(--gold-border);
-    color: var(--gold); font-size: 11px; font-weight: 500;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px;
-  }
+  .step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--gold-dim); border: 1px solid var(--gold-border); color: var(--gold); font-size: 11px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
   .step-content { flex: 1; }
   .step-text { font-size: 14px; color: var(--text); line-height: 1.5; }
   .step-meta { display: flex; gap: 10px; margin-top: 5px; flex-wrap: wrap; }
   .step-owner { font-size: 12px; color: var(--blue); }
   .step-deadline { font-size: 12px; color: var(--gold); }
 
-  /* TASKS */
-  .task-item {
-    display: flex; gap: 14px; align-items: flex-start;
-    padding: 14px 0; border-bottom: 1px solid var(--border);
-  }
+  .task-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--border); }
   .task-item:last-child { border-bottom: none; }
-  .task-box {
-    width: 18px; height: 18px; border-radius: 4px;
-    border: 1px solid var(--gold-border); flex-shrink: 0; margin-top: 2px;
-    background: var(--gold-dim);
-  }
+  .task-box { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--gold-border); flex-shrink: 0; margin-top: 2px; background: var(--gold-dim); }
   .task-content { flex: 1; }
   .task-text { font-size: 14px; color: var(--text); line-height: 1.5; }
   .task-meta { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
   .task-owner { font-size: 12px; color: var(--blue); }
   .task-deadline { font-size: 12px; color: var(--gold); }
-  .task-link {
-    font-size: 11px; color: var(--text-dim); text-decoration: none;
-    border: 1px solid var(--border2); border-radius: 3px;
-    padding: 2px 8px; transition: all 0.2s; letter-spacing: 0.03em;
-  }
+  .task-link { font-size: 11px; color: var(--text-dim); text-decoration: none; border: 1px solid var(--border2); border-radius: 3px; padding: 2px 8px; transition: all 0.2s; }
   .task-link:hover { color: var(--gold); border-color: var(--gold-border); }
 
-  /* RESOLVED */
-  .resolved-item {
-    display: flex; gap: 12px; align-items: flex-start;
-    padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-mid);
-  }
+  .resolved-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-mid); }
   .resolved-item:last-child { border-bottom: none; }
   .dot-green { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 7px; }
 
-  /* OPEN QUESTIONS */
-  .question-item {
-    display: flex; gap: 12px; align-items: flex-start;
-    padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-mid);
-  }
+  .question-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-mid); }
   .question-item:last-child { border-bottom: none; }
   .dot-blue { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); flex-shrink: 0; margin-top: 7px; }
 
-  .count-pill {
-    font-size: 11px; background: var(--surface2); color: var(--text-dim);
-    padding: 2px 8px; border-radius: 10px; font-family: monospace;
-    letter-spacing: 0; text-transform: none;
-  }
-
   .no-items { font-size: 13px; color: var(--text-dim); padding: 8px 0; }
+
+  /* DELETE */
+  .delete-zone { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+  .btn-delete { background: none; border: 1px solid rgba(200,100,100,0.2); color: var(--red); font-size: 12px; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: inherit; letter-spacing: 0.05em; transition: all 0.2s; }
+  .btn-delete:hover { background: var(--red-dim); border-color: rgba(200,100,100,0.4); }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: 12px; padding: 2rem; max-width: 520px; width: 90%; }
+  .modal h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; margin-bottom: 0.75rem; color: var(--text); }
+  .modal p { font-size: 14px; color: var(--text-mid); margin-bottom: 1.25rem; line-height: 1.6; }
+  .modal-cmd { background: #0a0a0c; border: 1px solid var(--border2); border-radius: 6px; padding: 0.75rem 1rem; font-family: monospace; font-size: 12px; color: var(--gold); line-height: 1.8; margin-bottom: 1.5rem; word-break: break-all; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-copy { background: var(--gold-dim); border: 1px solid var(--gold-border); color: var(--gold); font-size: 13px; padding: 9px 20px; border-radius: 6px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .btn-copy:hover { background: rgba(201,169,110,0.25); }
+  .btn-cancel { background: none; border: 1px solid var(--border2); color: var(--text-mid); font-size: 13px; padding: 9px 20px; border-radius: 6px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .btn-cancel:hover { color: var(--text); }
 </style>
 </head>
 <body>
@@ -266,8 +165,8 @@
 
 <div id="page-list" class="page active">
   <div class="list-page">
-    <div class="page-label">Все встречи</div>
-    <div class="meetings-grid" id="meetings-grid"></div>
+    <div class="page-label">Проекты и встречи</div>
+    <div id="projects-container"></div>
   </div>
 </div>
 
@@ -278,18 +177,36 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <h3>Удалить встречу</h3>
+    <p>Запусти <code style="color:var(--gold)">УДАЛИТЬ_МИТИНГ.bat</code> и введи имя файла, или выполни в cmd:</p>
+    <div class="modal-cmd" id="delete-cmd"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeDeleteModal()">Отмена</button>
+      <button class="btn-copy" id="copy-delete-btn" onclick="copyDeleteCmd()">Скопировать команду</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function() {
 
+// Project definitions — add new projects here
+var PROJECTS = [
+  { id: 'iq-nurseries',  label: 'IQ Nurseries',  icon: '🏫', color: '#c9a96e' },
+  { id: 'la-truffole',   label: 'La Truffole',   icon: '🍟', color: '#7a9cc4' },
+  { id: 'other',         label: 'Другое',         icon: '📁', color: '#9994a0' }
+];
+
+var collapsed = {};
+
 function formatDate(d) {
   if (!d) return '';
-  var dt = new Date(d + 'T12:00:00');
-  return dt.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+  return new Date(d + 'T12:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
 }
-
 function esc(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 async function loadMeetings() {
@@ -300,29 +217,90 @@ async function loadMeetings() {
   } catch(e) { return []; }
 }
 
+function getProject(m) {
+  return m.project || 'other';
+}
+
 function renderList(meetings) {
-  var grid = document.getElementById('meetings-grid');
-  var hdr = document.getElementById('header-count');
-  hdr.textContent = meetings.length + ' встреч';
-  if (!meetings.length) {
-    grid.innerHTML = '<div class="empty-state"><p>Встречи ещё не добавлены</p></div>';
+  var container = document.getElementById('projects-container');
+  var total = meetings.length;
+  document.getElementById('header-count').textContent = total + ' встреч';
+
+  if (!total) {
+    container.innerHTML = '<div class="empty-state"><p>Встречи ещё не добавлены</p></div>';
     return;
   }
-  var sorted = meetings.slice().sort(function(a,b){ return new Date(b.date)-new Date(a.date); });
-  grid.innerHTML = sorted.map(function(m) {
-    return '<div class="meeting-card" onclick="showDetail(\'' + esc(m.file) + '\')">' +
-      '<div class="card-date">' + esc(formatDate(m.date)) + '</div>' +
-      '<div class="card-title">' + esc(m.title) + '</div>' +
-      (m.participants ? '<div class="card-participants">' + esc(m.participants) + '</div>' : '') +
-      (m.summary_preview ? '<div class="card-purpose">' + esc(m.summary_preview) + '</div>' : '') +
-      '<div class="card-stats">' +
-        '<span class="stat stat-tasks">' + (m.tasks_count||0) + ' задач</span>' +
-        '<span class="stat stat-resolved">' + (m.resolved_count||0) + ' решено</span>' +
-        '<span class="stat stat-open">' + (m.open_count||0) + ' открытых</span>' +
-      '</div>' +
+
+  // Group by project
+  var groups = {};
+  PROJECTS.forEach(function(p) { groups[p.id] = []; });
+  meetings.forEach(function(m) {
+    var pid = getProject(m);
+    if (!groups[pid]) groups[pid] = [];
+    groups[pid].push(m);
+  });
+
+  // Sort each group by date desc
+  Object.keys(groups).forEach(function(pid) {
+    groups[pid].sort(function(a,b) { return new Date(b.date) - new Date(a.date); });
+  });
+
+  var html = '';
+  PROJECTS.forEach(function(proj) {
+    var items = groups[proj.id] || [];
+    // Skip empty projects except if it's 'other'
+    if (!items.length) return;
+
+    var isCollapsed = collapsed[proj.id];
+    html += '<div class="project-section">';
+    html += '<div class="project-header" onclick="toggleProject(\'' + proj.id + '\')">' +
+      '<div class="project-icon" style="background:' + proj.color + '22;border:1px solid ' + proj.color + '44">' + proj.icon + '</div>' +
+      '<div class="project-name">' + esc(proj.label) + '</div>' +
+      '<span class="project-count">' + items.length + '</span>' +
+      '<div class="project-divider"></div>' +
+      '<span class="project-toggle' + (isCollapsed ? ' collapsed' : '') + '" id="toggle-' + proj.id + '">▾</span>' +
     '</div>';
-  }).join('');
+
+    html += '<div class="project-meetings' + (isCollapsed ? ' collapsed' : '') + '" id="group-' + proj.id + '">';
+    items.forEach(function(m) {
+      html += '<div class="meeting-card" style="--card-accent:' + proj.color + '" onclick="showDetail(\'' + esc(m.file) + '\')">' +
+        '<div class="card-date">' + esc(formatDate(m.date)) + '</div>' +
+        '<div class="card-title">' + esc(m.title) + '</div>' +
+        (m.participants ? '<div class="card-participants">' + esc(m.participants) + '</div>' : '') +
+        (m.summary_preview ? '<div class="card-purpose">' + esc(m.summary_preview) + '</div>' : '') +
+        '<div class="card-stats">' +
+          '<span class="stat stat-tasks">' + (m.tasks_count||0) + ' задач</span>' +
+          '<span class="stat stat-resolved">' + (m.resolved_count||0) + ' решено</span>' +
+          '<span class="stat stat-open">' + (m.open_count||0) + ' открытых</span>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div></div>';
+  });
+
+  // Add card accent color via CSS var
+  container.innerHTML = html;
+  document.querySelectorAll('.meeting-card').forEach(function(card) {
+    var color = card.style.getPropertyValue('--card-accent');
+    card.style.setProperty('--card-accent', color);
+    var before = document.createElement('style');
+  });
+  // Apply card accent via inline approach
+  document.querySelectorAll('.meeting-card').forEach(function(card) {
+    var color = getComputedStyle(card).getPropertyValue('--card-accent').trim() || '#c9a96e';
+    card.addEventListener('mouseenter', function() {
+      card.querySelector('.meeting-card') && (card.style.borderTopColor = color);
+    });
+  });
 }
+
+window.toggleProject = function(pid) {
+  collapsed[pid] = !collapsed[pid];
+  var group = document.getElementById('group-' + pid);
+  var toggle = document.getElementById('toggle-' + pid);
+  if (group) group.classList.toggle('collapsed', collapsed[pid]);
+  if (toggle) toggle.classList.toggle('collapsed', collapsed[pid]);
+};
 
 window.showDetail = async function(file) {
   try {
@@ -331,102 +309,71 @@ window.showDetail = async function(file) {
     var a = m.analysis || {};
     var html = '';
 
-    // Header
+    // Project badge
+    var proj = PROJECTS.find(function(p) { return p.id === (m.project || 'other'); }) || PROJECTS[2];
+    html += '<div class="detail-project-badge" style="background:' + proj.color + '18;border:1px solid ' + proj.color + '33;color:' + proj.color + '">' +
+      proj.icon + ' ' + esc(proj.label) + '</div>';
+
     html += '<div class="detail-meta">' + esc(formatDate(m.date)) + '</div>';
     html += '<div class="detail-title">' + esc(m.title) + '</div>';
     html += '<div class="detail-participants">' + esc(m.participants || '') + '</div>';
 
-    // Purpose
     if (a.purpose) {
-      html += '<div class="purpose-block">' +
-        '<div class="purpose-label">Цель встречи</div>' +
-        '<div class="purpose-text">' + esc(a.purpose) + '</div>' +
-      '</div>';
+      html += '<div class="purpose-block"><div class="purpose-label">Цель встречи</div><div class="purpose-text">' + esc(a.purpose) + '</div></div>';
     }
 
-    // Key Takeaways
     if (a.key_takeaways && a.key_takeaways.length) {
       html += '<div class="section-header"><h2>Ключевые выводы <span class="count-pill">' + a.key_takeaways.length + '</span></h2></div>';
       html += '<div class="takeaways-grid">';
-      a.key_takeaways.forEach(function(t) {
-        html += '<div class="takeaway-item">' + esc(t) + '</div>';
-      });
+      a.key_takeaways.forEach(function(t) { html += '<div class="takeaway-item">' + esc(t) + '</div>'; });
       html += '</div>';
     }
 
-    // Topics
     if (a.topics && a.topics.length) {
       html += '<div class="section-header"><h2>Темы обсуждения</h2></div>';
       a.topics.forEach(function(topic) {
-        html += '<div class="topic-block">';
-        html += '<div class="topic-title">' + esc(topic.title) + '</div>';
-        if (topic.points && topic.points.length) {
-          topic.points.forEach(function(p) {
-            html += '<div class="topic-point">' + esc(p) + '</div>';
-          });
-        }
+        html += '<div class="topic-block"><div class="topic-title">' + esc(topic.title) + '</div>';
+        if (topic.points) topic.points.forEach(function(p) { html += '<div class="topic-point">' + esc(p) + '</div>'; });
         html += '</div>';
       });
     }
 
-    // Next Steps
     if (a.next_steps && a.next_steps.length) {
       html += '<div class="section-header"><h2>Следующие шаги <span class="count-pill">' + a.next_steps.length + '</span></h2></div>';
       a.next_steps.forEach(function(s, i) {
-        html += '<div class="next-step-item">' +
-          '<div class="step-num">' + (i+1) + '</div>' +
-          '<div class="step-content">' +
-            '<div class="step-text">' + esc(s.text || s) + '</div>' +
-            '<div class="step-meta">' +
-              (s.owner ? '<span class="step-owner">👤 ' + esc(s.owner) + '</span>' : '') +
-              (s.deadline ? '<span class="step-deadline">📅 ' + esc(s.deadline) + '</span>' : '') +
-            '</div>' +
-          '</div>' +
-        '</div>';
+        var text = typeof s === 'string' ? s : s.text;
+        var owner = s.owner || null;
+        var deadline = s.deadline || null;
+        html += '<div class="next-step-item"><div class="step-num">' + (i+1) + '</div><div class="step-content"><div class="step-text">' + esc(text) + '</div>';
+        html += '<div class="step-meta">' + (owner ? '<span class="step-owner">👤 ' + esc(owner) + '</span>' : '') + (deadline ? '<span class="step-deadline">📅 ' + esc(deadline) + '</span>' : '') + '</div></div></div>';
       });
     }
 
-    // Tasks
     if (a.tasks && a.tasks.length) {
       html += '<div class="section-header"><h2>Action Items <span class="count-pill">' + a.tasks.length + '</span></h2></div>';
       a.tasks.forEach(function(t) {
-        html += '<div class="task-item">' +
-          '<div class="task-box"></div>' +
-          '<div class="task-content">' +
-            '<div class="task-text">' + esc(t.text) + '</div>' +
-            '<div class="task-meta">' +
-              (t.owner ? '<span class="task-owner">👤 ' + esc(t.owner) + '</span>' : '') +
-              (t.deadline ? '<span class="task-deadline">📅 ' + esc(t.deadline) + '</span>' : '') +
-              (t.fathom_link ? '<a class="task-link" href="' + esc(t.fathom_link) + '" target="_blank">▶ фрагмент</a>' : '') +
-            '</div>' +
-          '</div>' +
-        '</div>';
+        html += '<div class="task-item"><div class="task-box"></div><div class="task-content"><div class="task-text">' + esc(t.text) + '</div>';
+        html += '<div class="task-meta">' + (t.owner ? '<span class="task-owner">👤 ' + esc(t.owner) + '</span>' : '') + (t.deadline ? '<span class="task-deadline">📅 ' + esc(t.deadline) + '</span>' : '') + (t.fathom_link ? '<a class="task-link" href="' + esc(t.fathom_link) + '" target="_blank">▶ фрагмент</a>' : '') + '</div></div></div>';
       });
     }
 
-    // Resolved
     if (a.resolved && a.resolved.length) {
       html += '<div class="section-header"><h2>Принятые решения <span class="count-pill">' + a.resolved.length + '</span></h2></div>';
-      a.resolved.forEach(function(r) {
-        html += '<div class="resolved-item"><div class="dot-green"></div><span>' + esc(r) + '</span></div>';
-      });
+      a.resolved.forEach(function(r) { html += '<div class="resolved-item"><div class="dot-green"></div><span>' + esc(r) + '</span></div>'; });
     }
 
-    // Open questions
     if (a.open_questions && a.open_questions.length) {
       html += '<div class="section-header"><h2>Открытые вопросы <span class="count-pill">' + a.open_questions.length + '</span></h2></div>';
-      a.open_questions.forEach(function(q) {
-        html += '<div class="question-item"><div class="dot-blue"></div><span>' + esc(q) + '</span></div>';
-      });
+      a.open_questions.forEach(function(q) { html += '<div class="question-item"><div class="dot-blue"></div><span>' + esc(q) + '</span></div>'; });
     }
+
+    html += '<div class="delete-zone"><button class="btn-delete" onclick="showDeleteModal(\'' + esc(file) + '\', \'' + esc(m.title) + '\')">Удалить встречу</button></div>';
 
     document.getElementById('detail-content').innerHTML = html;
     document.getElementById('page-list').classList.remove('active');
     document.getElementById('page-detail').classList.add('active');
     window.scrollTo(0, 0);
-  } catch(e) {
-    alert('Ошибка загрузки: ' + e.message);
-  }
+  } catch(e) { alert('Ошибка: ' + e.message); }
 };
 
 window.showList = function() {
@@ -435,8 +382,22 @@ window.showList = function() {
   window.scrollTo(0, 0);
 };
 
-loadMeetings().then(renderList);
+window.showDeleteModal = function(file, title) {
+  document.getElementById('delete-cmd').textContent = 'python delete_meeting.py ' + file;
+  document.getElementById('delete-modal').classList.add('show');
+};
+window.closeDeleteModal = function() {
+  document.getElementById('delete-modal').classList.remove('show');
+};
+window.copyDeleteCmd = function() {
+  navigator.clipboard.writeText(document.getElementById('delete-cmd').textContent).then(function() {
+    var btn = document.getElementById('copy-delete-btn');
+    btn.textContent = 'Скопировано!';
+    setTimeout(function() { btn.textContent = 'Скопировать команду'; }, 2000);
+  });
+};
 
+loadMeetings().then(renderList);
 })();
 </script>
 </body>
