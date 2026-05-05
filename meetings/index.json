@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "file": "2025-04-09-финализация-планировки-детского-сада.json",
+    "title": "Финализация планировки детского сада",
+    "date": "2025-04-09",
+    "participants": "Misha, Dima, Linda, Masha, Nandhu",
+    "project": "iq-nurseries",
+    "summary_preview": "Финализировать планировку детского сада с учетом требований Ofsted и ограничений строительства",
+    "tasks_count": 7,
+    "resolved_count": 10,
+    "open_count": 6
+  }
+]
