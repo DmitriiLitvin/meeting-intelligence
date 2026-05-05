@@ -4,174 +4,440 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Meeting Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --bg: #0c0c0e;
+    --surface: #131316;
+    --surface2: #1a1a1f;
+    --border: rgba(255,255,255,0.06);
+    --border2: rgba(255,255,255,0.1);
+    --gold: #c9a96e;
+    --gold-dim: rgba(201,169,110,0.15);
+    --gold-border: rgba(201,169,110,0.25);
+    --text: #e8e4dc;
+    --text-mid: #9994a0;
+    --text-dim: #555560;
+    --green: #6db88a;
+    --green-dim: rgba(109,184,138,0.1);
+    --blue: #7a9cc4;
+    --blue-dim: rgba(122,156,196,0.1);
+    --red-dim: rgba(200,100,100,0.1);
+    --red: #c47a7a;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Georgia', serif; background: #0f0f0f; color: #e8e4dc; min-height: 100vh; }
 
-  .header { padding: 2rem 2.5rem 1.25rem; border-bottom: 0.5px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; }
-  .logo { font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; color: #888; }
-  .logo span { color: #c9b89a; }
-  .header-meta { font-size: 12px; color: #444; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
 
-  .main { padding: 2rem 2.5rem; max-width: 1100px; }
+  /* ---- HEADER ---- */
+  .header {
+    padding: 1.75rem 3rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(12,12,14,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+  .logo em { color: var(--gold); font-style: normal; }
+  .header-right { font-size: 13px; color: var(--text-dim); letter-spacing: 0.05em; }
+
+  /* ---- PAGES ---- */
   .page { display: none; }
   .page.active { display: block; }
 
-  .section-title { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #555; margin-bottom: 1.5rem; }
+  /* ---- LIST PAGE ---- */
+  .list-page { padding: 3rem; max-width: 1200px; margin: 0 auto; }
 
-  .meetings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
-  .meeting-card { background: #161616; border: 0.5px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 1.25rem; cursor: pointer; transition: all 0.2s; }
-  .meeting-card:hover { border-color: rgba(201,184,154,0.35); background: #1a1a1a; transform: translateY(-1px); }
-  .card-date { font-size: 11px; letter-spacing: 0.1em; color: #555; text-transform: uppercase; margin-bottom: 8px; }
-  .card-title { font-size: 15px; color: #ddd; margin-bottom: 10px; line-height: 1.4; }
-  .card-summary { font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .card-badges { display: flex; gap: 8px; flex-wrap: wrap; }
-  .badge { font-size: 11px; padding: 3px 8px; border-radius: 3px; }
-  .badge-tasks { background: rgba(201,184,154,0.1); color: #c9b89a; border: 0.5px solid rgba(201,184,154,0.2); }
-  .badge-resolved { background: rgba(100,180,120,0.1); color: #7ab88a; border: 0.5px solid rgba(100,180,120,0.2); }
-  .badge-open { background: rgba(138,154,184,0.1); color: #8a9ab8; border: 0.5px solid rgba(138,154,184,0.2); }
+  .page-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 2.5rem;
+  }
 
-  .empty-state { text-align: center; padding: 5rem 2rem; color: #333; }
-  .empty-state p { font-size: 14px; }
+  .meetings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.25rem;
+  }
 
-  .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #555; cursor: pointer; margin-bottom: 1.75rem; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; background: none; border: none; }
-  .back-btn:hover { color: #c9b89a; }
+  .meeting-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .meeting-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .meeting-card:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  .meeting-card:hover::before { opacity: 1; }
 
-  .detail-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid rgba(255,255,255,0.06); }
-  .detail-date { font-size: 11px; color: #555; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
-  .detail-title { font-size: 24px; color: #e8e4dc; line-height: 1.3; margin-bottom: 8px; }
-  .detail-participants { font-size: 13px; color: #666; }
+  .card-date { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
+  .card-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.25; }
+  .card-participants { font-size: 12px; color: var(--text-mid); margin-bottom: 14px; }
+  .card-purpose { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
-  .summary-block { background: #161616; border-left: 2px solid #c9b89a; padding: 1rem 1.25rem; border-radius: 0 6px 6px 0; margin-bottom: 2rem; font-size: 14px; color: #aaa; line-height: 1.8; }
+  .card-stats { display: flex; gap: 10px; flex-wrap: wrap; }
+  .stat { font-size: 11px; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.03em; }
+  .stat-tasks { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
+  .stat-resolved { background: var(--green-dim); color: var(--green); border: 1px solid rgba(109,184,138,0.2); }
+  .stat-open { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(122,156,196,0.2); }
 
-  .section-block { margin-bottom: 2rem; }
-  .section-block h3 { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #555; margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
-  .section-block h3::after { content: ''; flex: 1; height: 0.5px; background: rgba(255,255,255,0.05); }
-  .count-badge { font-size: 10px; background: rgba(255,255,255,0.05); color: #555; padding: 2px 7px; border-radius: 10px; letter-spacing: 0; text-transform: none; font-family: monospace; }
+  .empty-state { text-align: center; padding: 6rem 2rem; color: var(--text-dim); }
+  .empty-state p { font-size: 15px; }
 
-  .task-item { padding: 12px 0; border-bottom: 0.5px solid rgba(255,255,255,0.04); display: flex; gap: 12px; align-items: flex-start; }
+  /* ---- DETAIL PAGE ---- */
+  .detail-page { max-width: 900px; margin: 0 auto; padding: 2.5rem 3rem 5rem; }
+
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-dim); cursor: pointer; margin-bottom: 2.5rem;
+    background: none; border: none; transition: color 0.2s;
+  }
+  .back-btn:hover { color: var(--gold); }
+
+  .detail-meta { margin-bottom: 0.5rem; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); }
+  .detail-title { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 600; line-height: 1.15; color: var(--text); margin-bottom: 0.75rem; }
+  .detail-participants { font-size: 13px; color: var(--text-mid); margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+
+  /* PURPOSE BLOCK */
+  .purpose-block {
+    background: linear-gradient(135deg, rgba(201,169,110,0.08), rgba(201,169,110,0.03));
+    border: 1px solid var(--gold-border);
+    border-radius: 10px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 2rem;
+  }
+  .purpose-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; opacity: 0.8; }
+  .purpose-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; color: var(--text); line-height: 1.5; }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 1.25rem; margin-top: 2.5rem;
+  }
+  .section-header h2 {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text-dim); font-weight: 500;
+  }
+  .section-header::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* KEY TAKEAWAYS */
+  .takeaways-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.5rem; }
+  @media (max-width: 640px) { .takeaways-grid { grid-template-columns: 1fr; } }
+  .takeaway-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.6;
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  .takeaway-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--gold);
+    border-radius: 3px 0 0 3px;
+    opacity: 0.5;
+  }
+
+  /* TOPICS */
+  .topic-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .topic-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+  .topic-point { font-size: 14px; color: var(--text-mid); line-height: 1.6; padding: 4px 0 4px 1rem; position: relative; }
+  .topic-point::before { content: '—'; position: absolute; left: 0; color: var(--text-dim); }
+
+  /* NEXT STEPS */
+  .next-step-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .next-step-item:last-child { border-bottom: none; }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--gold-dim); border: 1px solid var(--gold-border);
+    color: var(--gold); font-size: 11px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .step-content { flex: 1; }
+  .step-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+  .step-meta { display: flex; gap: 10px; margin-top: 5px; flex-wrap: wrap; }
+  .step-owner { font-size: 12px; color: var(--blue); }
+  .step-deadline { font-size: 12px; color: var(--gold); }
+
+  /* TASKS */
+  .task-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
   .task-item:last-child { border-bottom: none; }
-  .task-check { width: 16px; height: 16px; border: 0.5px solid rgba(201,184,154,0.25); border-radius: 3px; flex-shrink: 0; margin-top: 2px; }
+  .task-box {
+    width: 18px; height: 18px; border-radius: 4px;
+    border: 1px solid var(--gold-border); flex-shrink: 0; margin-top: 2px;
+    background: var(--gold-dim);
+  }
   .task-content { flex: 1; }
-  .task-text { font-size: 14px; color: #ccc; line-height: 1.5; }
-  .task-meta { display: flex; gap: 10px; margin-top: 5px; flex-wrap: wrap; }
-  .task-owner { font-size: 12px; color: #8a9ab8; }
-  .task-deadline { font-size: 12px; color: #c9b89a; }
-  .task-fathom { font-size: 11px; color: #666; text-decoration: none; border-bottom: 0.5px solid #333; transition: color 0.2s; }
-  .task-fathom:hover { color: #c9b89a; border-color: #c9b89a; }
+  .task-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+  .task-meta { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; align-items: center; }
+  .task-owner { font-size: 12px; color: var(--blue); }
+  .task-deadline { font-size: 12px; color: var(--gold); }
+  .task-link {
+    font-size: 11px; color: var(--text-dim); text-decoration: none;
+    border: 1px solid var(--border2); border-radius: 3px;
+    padding: 2px 8px; transition: all 0.2s; letter-spacing: 0.03em;
+  }
+  .task-link:hover { color: var(--gold); border-color: var(--gold-border); }
 
-  .list-item { padding: 9px 0; border-bottom: 0.5px solid rgba(255,255,255,0.04); font-size: 14px; color: #999; line-height: 1.5; display: flex; gap: 12px; align-items: flex-start; }
-  .list-item:last-child { border-bottom: none; }
-  .dot-green { width: 6px; height: 6px; border-radius: 50%; background: #7ab88a; flex-shrink: 0; margin-top: 7px; }
-  .dot-blue { width: 6px; height: 6px; border-radius: 50%; background: #8a9ab8; flex-shrink: 0; margin-top: 7px; }
+  /* RESOLVED */
+  .resolved-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-mid);
+  }
+  .resolved-item:last-child { border-bottom: none; }
+  .dot-green { width: 7px; height: 7px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 7px; }
 
-  .no-items { font-size: 13px; color: #444; padding: 8px 0; }
+  /* OPEN QUESTIONS */
+  .question-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-mid);
+  }
+  .question-item:last-child { border-bottom: none; }
+  .dot-blue { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); flex-shrink: 0; margin-top: 7px; }
+
+  .count-pill {
+    font-size: 11px; background: var(--surface2); color: var(--text-dim);
+    padding: 2px 8px; border-radius: 10px; font-family: monospace;
+    letter-spacing: 0; text-transform: none;
+  }
+
+  .no-items { font-size: 13px; color: var(--text-dim); padding: 8px 0; }
 </style>
 </head>
 <body>
+
 <div class="header">
-  <div class="logo">Meeting <span>Intelligence</span></div>
-  <div class="header-meta" id="header-count"></div>
+  <div class="logo">Meeting <em>Intelligence</em></div>
+  <div class="header-right" id="header-count"></div>
 </div>
 
-<div class="main">
-  <div id="page-list" class="page active">
-    <div class="section-title">Все встречи</div>
+<div id="page-list" class="page active">
+  <div class="list-page">
+    <div class="page-label">Все встречи</div>
     <div class="meetings-grid" id="meetings-grid"></div>
   </div>
+</div>
 
-  <div id="page-detail" class="page">
+<div id="page-detail" class="page">
+  <div class="detail-page">
     <button class="back-btn" onclick="showList()">← Все встречи</button>
     <div id="detail-content"></div>
   </div>
 </div>
 
 <script>
-const DATA_URL = 'meetings/index.json';
-
-async function loadMeetings() {
-  try {
-    const r = await fetch(DATA_URL + '?t=' + Date.now());
-    if (!r.ok) throw new Error('not found');
-    return await r.json();
-  } catch {
-    return [];
-  }
-}
+(function() {
 
 function formatDate(d) {
   if (!d) return '';
-  const dt = new Date(d + 'T12:00:00');
+  var dt = new Date(d + 'T12:00:00');
   return dt.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function loadMeetings() {
+  try {
+    var r = await fetch('meetings/index.json?t=' + Date.now());
+    if (!r.ok) return [];
+    return await r.json();
+  } catch(e) { return []; }
+}
+
 function renderList(meetings) {
-  const grid = document.getElementById('meetings-grid');
-  document.getElementById('header-count').textContent = meetings.length + ' встреч';
+  var grid = document.getElementById('meetings-grid');
+  var hdr = document.getElementById('header-count');
+  hdr.textContent = meetings.length + ' встреч';
   if (!meetings.length) {
     grid.innerHTML = '<div class="empty-state"><p>Встречи ещё не добавлены</p></div>';
     return;
   }
-  const sorted = [...meetings].sort((a, b) => new Date(b.date) - new Date(a.date));
-  grid.innerHTML = sorted.map(m => `
-    <div class="meeting-card" onclick="showDetail('${m.file}')">
-      <div class="card-date">${formatDate(m.date)}</div>
-      <div class="card-title">${m.title}</div>
-      <div class="card-summary">${m.summary_preview || ''}</div>
-      <div class="card-badges">
-        <span class="badge badge-tasks">${m.tasks_count} задач</span>
-        <span class="badge badge-resolved">${m.resolved_count} решено</span>
-        <span class="badge badge-open">${m.open_count} открытых</span>
-      </div>
-    </div>`).join('');
+  var sorted = meetings.slice().sort(function(a,b){ return new Date(b.date)-new Date(a.date); });
+  grid.innerHTML = sorted.map(function(m) {
+    return '<div class="meeting-card" onclick="showDetail(\'' + esc(m.file) + '\')">' +
+      '<div class="card-date">' + esc(formatDate(m.date)) + '</div>' +
+      '<div class="card-title">' + esc(m.title) + '</div>' +
+      (m.participants ? '<div class="card-participants">' + esc(m.participants) + '</div>' : '') +
+      (m.summary_preview ? '<div class="card-purpose">' + esc(m.summary_preview) + '</div>' : '') +
+      '<div class="card-stats">' +
+        '<span class="stat stat-tasks">' + (m.tasks_count||0) + ' задач</span>' +
+        '<span class="stat stat-resolved">' + (m.resolved_count||0) + ' решено</span>' +
+        '<span class="stat stat-open">' + (m.open_count||0) + ' открытых</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
-async function showDetail(file) {
-  const r = await fetch('meetings/' + file + '?t=' + Date.now());
-  const m = await r.json();
-  const d = document.getElementById('detail-content');
-  d.innerHTML = `
-    <div class="detail-header">
-      <div class="detail-date">${formatDate(m.date)}</div>
-      <div class="detail-title">${m.title}</div>
-      ${m.participants ? `<div class="detail-participants">Участники: ${m.participants}</div>` : ''}
-    </div>
-    <div class="summary-block">${m.analysis.summary}</div>
-    <div class="section-block">
-      <h3>Задачи <span class="count-badge">${m.analysis.tasks.length}</span></h3>
-      ${m.analysis.tasks.length ? m.analysis.tasks.map(t => `
-        <div class="task-item">
-          <div class="task-check"></div>
-          <div class="task-content">
-            <div class="task-text">${t.text}</div>
-            <div class="task-meta">
-              ${t.owner ? `<span class="task-owner">&#128100; ${t.owner}</span>` : ''}
-              ${t.deadline ? `<span class="task-deadline">&#128197; ${t.deadline}</span>` : ''}
-              ${t.fathom_link ? `<a class="task-fathom" href="${t.fathom_link}" target="_blank">▶ смотреть фрагмент</a>` : ''}
-            </div>
-          </div>
-        </div>`).join('') : '<div class="no-items">Задачи не выявлены</div>'}
-    </div>
-    <div class="section-block">
-      <h3>Решённые вопросы <span class="count-badge">${m.analysis.resolved.length}</span></h3>
-      ${m.analysis.resolved.length ? m.analysis.resolved.map(r => `
-        <div class="list-item"><div class="dot-green"></div><span>${r}</span></div>`).join('') : '<div class="no-items">—</div>'}
-    </div>
-    <div class="section-block">
-      <h3>Открытые вопросы <span class="count-badge">${m.analysis.open_questions.length}</span></h3>
-      ${m.analysis.open_questions.length ? m.analysis.open_questions.map(q => `
-        <div class="list-item"><div class="dot-blue"></div><span>${q}</span></div>`).join('') : '<div class="no-items">—</div>'}
-    </div>`;
-  document.getElementById('page-list').classList.remove('active');
-  document.getElementById('page-detail').classList.add('active');
-}
+window.showDetail = async function(file) {
+  try {
+    var r = await fetch('meetings/' + file + '?t=' + Date.now());
+    var m = await r.json();
+    var a = m.analysis || {};
+    var html = '';
 
-function showList() {
+    // Header
+    html += '<div class="detail-meta">' + esc(formatDate(m.date)) + '</div>';
+    html += '<div class="detail-title">' + esc(m.title) + '</div>';
+    html += '<div class="detail-participants">' + esc(m.participants || '') + '</div>';
+
+    // Purpose
+    if (a.purpose) {
+      html += '<div class="purpose-block">' +
+        '<div class="purpose-label">Цель встречи</div>' +
+        '<div class="purpose-text">' + esc(a.purpose) + '</div>' +
+      '</div>';
+    }
+
+    // Key Takeaways
+    if (a.key_takeaways && a.key_takeaways.length) {
+      html += '<div class="section-header"><h2>Ключевые выводы <span class="count-pill">' + a.key_takeaways.length + '</span></h2></div>';
+      html += '<div class="takeaways-grid">';
+      a.key_takeaways.forEach(function(t) {
+        html += '<div class="takeaway-item">' + esc(t) + '</div>';
+      });
+      html += '</div>';
+    }
+
+    // Topics
+    if (a.topics && a.topics.length) {
+      html += '<div class="section-header"><h2>Темы обсуждения</h2></div>';
+      a.topics.forEach(function(topic) {
+        html += '<div class="topic-block">';
+        html += '<div class="topic-title">' + esc(topic.title) + '</div>';
+        if (topic.points && topic.points.length) {
+          topic.points.forEach(function(p) {
+            html += '<div class="topic-point">' + esc(p) + '</div>';
+          });
+        }
+        html += '</div>';
+      });
+    }
+
+    // Next Steps
+    if (a.next_steps && a.next_steps.length) {
+      html += '<div class="section-header"><h2>Следующие шаги <span class="count-pill">' + a.next_steps.length + '</span></h2></div>';
+      a.next_steps.forEach(function(s, i) {
+        html += '<div class="next-step-item">' +
+          '<div class="step-num">' + (i+1) + '</div>' +
+          '<div class="step-content">' +
+            '<div class="step-text">' + esc(s.text || s) + '</div>' +
+            '<div class="step-meta">' +
+              (s.owner ? '<span class="step-owner">👤 ' + esc(s.owner) + '</span>' : '') +
+              (s.deadline ? '<span class="step-deadline">📅 ' + esc(s.deadline) + '</span>' : '') +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+    }
+
+    // Tasks
+    if (a.tasks && a.tasks.length) {
+      html += '<div class="section-header"><h2>Action Items <span class="count-pill">' + a.tasks.length + '</span></h2></div>';
+      a.tasks.forEach(function(t) {
+        html += '<div class="task-item">' +
+          '<div class="task-box"></div>' +
+          '<div class="task-content">' +
+            '<div class="task-text">' + esc(t.text) + '</div>' +
+            '<div class="task-meta">' +
+              (t.owner ? '<span class="task-owner">👤 ' + esc(t.owner) + '</span>' : '') +
+              (t.deadline ? '<span class="task-deadline">📅 ' + esc(t.deadline) + '</span>' : '') +
+              (t.fathom_link ? '<a class="task-link" href="' + esc(t.fathom_link) + '" target="_blank">▶ фрагмент</a>' : '') +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+    }
+
+    // Resolved
+    if (a.resolved && a.resolved.length) {
+      html += '<div class="section-header"><h2>Принятые решения <span class="count-pill">' + a.resolved.length + '</span></h2></div>';
+      a.resolved.forEach(function(r) {
+        html += '<div class="resolved-item"><div class="dot-green"></div><span>' + esc(r) + '</span></div>';
+      });
+    }
+
+    // Open questions
+    if (a.open_questions && a.open_questions.length) {
+      html += '<div class="section-header"><h2>Открытые вопросы <span class="count-pill">' + a.open_questions.length + '</span></h2></div>';
+      a.open_questions.forEach(function(q) {
+        html += '<div class="question-item"><div class="dot-blue"></div><span>' + esc(q) + '</span></div>';
+      });
+    }
+
+    document.getElementById('detail-content').innerHTML = html;
+    document.getElementById('page-list').classList.remove('active');
+    document.getElementById('page-detail').classList.add('active');
+    window.scrollTo(0, 0);
+  } catch(e) {
+    alert('Ошибка загрузки: ' + e.message);
+  }
+};
+
+window.showList = function() {
   document.getElementById('page-list').classList.add('active');
   document.getElementById('page-detail').classList.remove('active');
-}
+  window.scrollTo(0, 0);
+};
 
 loadMeetings().then(renderList);
+
+})();
 </script>
 </body>
 </html>
